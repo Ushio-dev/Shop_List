@@ -3,14 +3,30 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class DB {
+
+  static Future<void> createTableItem(Database db) async {
+    await db.execute("CREATE TABLE item(Item_Id INTEGER PRIMARY KEY, name TEXT, amount INTEGER, Lista_Id INTEGER NOT NULL, FOREIGN KEY(Lista_Id) REFERENCES listas(Lista_Id))");
+  }
+
+  static Future<void> createTableListas(Database db) async {
+    await db.execute("CREATE TABLE listas (Lista_Id INTEGER PRIMARY KEY, name TEXT)");
+  }
+
   static Future<Database> _opendDB() async {
     return openDatabase(join(await getDatabasesPath(), 'shoplist_db'),
-      onCreate: (db, version) {
-        return db.execute("CREATE TABLE item(id INTEGER PRIMARY KEY, name TEXT, amount INTEGER)",
-       );
+      onCreate: (db, version) async {
+        await createTableListas(db);
+        await createTableItem(db);
       }, version: 1
     );
   }
+
+  static Future<void> insertLista(String nombreLista) async {
+    final db = await DB._opendDB();
+    final lista = {'name': nombreLista};
+    final id = await db.insert("listas", lista);
+  }
+
 
   static Future<void> insert(ItemModel itemModel) async {
     Database database = await _opendDB();

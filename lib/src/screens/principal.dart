@@ -14,11 +14,6 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
       appBar: AppBar(
         title: Text("Shop List"),
       ),
-      body: Column(
-        children: [
-          Text("Hola Mundo")
-        ],
-      ),
     );
   }
 }
