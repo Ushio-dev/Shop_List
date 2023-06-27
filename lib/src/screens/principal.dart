@@ -12,7 +12,6 @@ class PrincipalScreen extends StatefulWidget {
 class _PrincipalScreenState extends State<PrincipalScreen> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     var data = Provider.of<ListasProvider>(context, listen: false);
     data.fetchData();
@@ -27,14 +26,14 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
       return Scaffold(
           floatingActionButton: MyFab(
               formKey: formKey, nombreListaController: nombreListaController),
-          body: Center(
+          body: const Center(
             child: CircularProgressIndicator(),
           ));
     } else if (context.watch<ListasProvider>().error != '') {
       return Scaffold(
           floatingActionButton: MyFab(
               formKey: formKey, nombreListaController: nombreListaController),
-          body: Center(
+          body: const Center(
             child: Text("Error al traer los datos"),
           ));
     } else {
