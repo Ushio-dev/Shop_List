@@ -56,7 +56,7 @@ class DB {
     database.insert('item', itemModel.toMap());
   }
 
-  // a partir de aca no se hace una wea
+  // ----------------- a partir de aca no se hace una wea -----------------------------
   static Future<void> insert(ItemModel itemModel) async {
     Database database = await _opendDB();
 
