@@ -11,8 +11,8 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Shop List"),
+      body: Center(
+        
       ),
     );
   }

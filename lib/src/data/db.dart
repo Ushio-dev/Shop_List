@@ -32,6 +32,19 @@ class DB {
             ListaModel(id: listas[index]['id'], name: listas[index]['name']));
   }
 
+  static Future<List<ItemModel>> traerItems() async {
+    Database db = await _opendDB();
+    final List<Map<String, dynamic>> items = await db.query('item');
+
+    return List.generate(
+        items.length,
+        (index) => ItemModel(
+            id: items[index]['id'],
+            name: items[index]['name'],
+            amount: items[index]['amount'],
+            price: items[index]['price']));
+  }
+
   static Future<void> insertLista(String nombreLista) async {
     final db = await DB._opendDB();
     final lista = {'name': nombreLista};
@@ -43,6 +56,7 @@ class DB {
     database.insert('item', itemModel.toMap());
   }
 
+  // ----------------- a partir de aca no se hace una wea -----------------------------
   static Future<void> insert(ItemModel itemModel) async {
     Database database = await _opendDB();
 
