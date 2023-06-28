@@ -12,6 +12,6 @@ class ItemModel {
   }
 
   Map<String, dynamic> toMapRequest() {
-    return {'name': name, 'amount': amount, 'lista_id': id_lista};
+    return {'name': name, 'amount': amount, 'lista_id': id_lista, 'price': price};
   }
 }

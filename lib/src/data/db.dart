@@ -6,7 +6,7 @@ import 'package:path/path.dart';
 class DB {
   static Future<void> createTableItem(Database db) async {
     await db.execute(
-        "CREATE TABLE item(Item_Id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, amount INTEGER, Lista_Id INTEGER NOT NULL, FOREIGN KEY(Lista_Id) REFERENCES listas(Lista_Id))");
+        "CREATE TABLE item(Item_Id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, amount INTEGER, price INTEGER, Lista_Id INTEGER NOT NULL, FOREIGN KEY(Lista_Id) REFERENCES listas(Lista_Id))");
   }
 
   static Future<void> createTableListas(Database db) async {

@@ -35,12 +35,47 @@ class _ItemsScreenState extends State<ItemsScreen> {
         precioController: precioController,
         idLista: id,
       ),
-      body: Center(
-        child: ListView.builder(
+      body: Padding(
+        padding: const EdgeInsets.all(3.0),
+        child: Center(
+            child: ListView.builder(
           itemCount: context.watch<ItemProvider>().items.length,
           itemBuilder: (context, index) {
-            return Text("${context.watch<ItemProvider>().items[index].name}");
-          },)
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Table(
+                  defaultVerticalAlignment: TableCellVerticalAlignment.bottom,
+                  children: [
+                    TableRow(children: [
+                      TableRowInkWell(
+                        onTap: () {},
+                        child: Text(
+                            context.watch<ItemProvider>().items[index].name),
+                      ),
+                      TableRowInkWell(
+                        onTap: () {},
+                        child: Text(context
+                            .watch<ItemProvider>()
+                            .items[index]
+                            .amount
+                            .toString()),
+                      ),
+                      TableRowInkWell(
+                        onTap: () {},
+                        child: Text(context
+                            .watch<ItemProvider>()
+                            .items[index]
+                            .price
+                            .toString()),
+                      ),
+                    ])
+                  ],
+                ),
+              ),
+            );
+          },
+        )),
       ),
     );
   }
@@ -100,7 +135,7 @@ class MyFab extends StatelessWidget {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.all(8.0),
+                            padding: const EdgeInsets.all(8.0),
                             child: TextFormField(
                               controller: cantidadController,
                               decoration:
@@ -108,7 +143,7 @@ class MyFab extends StatelessWidget {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.all(8.0),
+                            padding: const EdgeInsets.all(8.0),
                             child: TextFormField(
                               controller: precioController,
                               decoration: const InputDecoration(
@@ -131,11 +166,23 @@ class MyFab extends StatelessWidget {
                                   onPressed: () {
                                     if (formKey.currentState!.validate()) {
                                       String name = nombreItemController.text;
-                                      int cantidad = cantidadController.text.isNotEmpty ? int.parse(cantidadController.text) : 0;
-                                      int precio = precioController.text.isNotEmpty ? int.parse(precioController.text) : 0;
+                                      int cantidad = cantidadController
+                                              .text.isNotEmpty
+                                          ? int.parse(cantidadController.text)
+                                          : 0;
+                                      int precio =
+                                          precioController.text.isNotEmpty
+                                              ? int.parse(precioController.text)
+                                              : 0;
 
-                                      ItemModel nuevoItem = ItemModel(name: name, amount: cantidad, price: precio, id_lista: idLista);
-                                      context.read<ItemProvider>().nuevoItem(nuevoItem);
+                                      ItemModel nuevoItem = ItemModel(
+                                          name: name,
+                                          amount: cantidad,
+                                          price: precio,
+                                          id_lista: idLista);
+                                      context
+                                          .read<ItemProvider>()
+                                          .nuevoItem(nuevoItem);
                                       Navigator.pop(context);
                                     }
                                   },
