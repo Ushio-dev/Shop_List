@@ -32,10 +32,10 @@ class DB {
             ListaModel(id: listas[index]['Lista_Id'], name: listas[index]['name']));
   }
 
-  static Future<List<ItemModel>> traerItems() async {
+  static Future<List<ItemModel>> traerItems(int id) async {
     Database db = await _opendDB();
-    final List<Map<String, dynamic>> items = await db.query('item');
-    print(items[0]['id']);
+    final List<Map<String, dynamic>> items = await db.query('item', where: "Item_Id = ?", whereArgs: [id]);
+    
     return List.generate(
         items.length,
         (index) => ItemModel(

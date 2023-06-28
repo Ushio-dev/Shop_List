@@ -60,7 +60,7 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
                     ),
                     clipBehavior: Clip.hardEdge,
                     onPressed: () {
-                      Navigator.of(context).pushNamed("/items", arguments: context.read<ListasProvider>().listas[index].id);
+                      Navigator.of(context).pushNamed("/items", arguments: context.read<ListasProvider>().listas[index]);
                     },
                     child: Text(
                         context.read<ListasProvider>().listas[index].name,
