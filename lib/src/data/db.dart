@@ -34,7 +34,7 @@ class DB {
 
   static Future<List<ItemModel>> traerItems(int id) async {
     Database db = await _opendDB();
-    final List<Map<String, dynamic>> items = await db.query('item', where: "Item_Id = ?", whereArgs: [id]);
+    final List<Map<String, dynamic>> items = await db.query('item', where: "lista_id = ?", whereArgs: [id]);
     
     return List.generate(
         items.length,
@@ -42,7 +42,8 @@ class DB {
             id: items[index]['id'],
             name: items[index]['name'],
             amount: items[index]['amount'],
-            price: items[index]['price']));
+            price: items[index]['price'],
+            id_lista: items[index]['lista_id']));
   }
 
   static Future<void> insertLista(String nombreLista) async {
@@ -53,13 +54,13 @@ class DB {
 
   static Future<void> insertItem(ItemModel itemModel) async {
     Database database = await _opendDB();
-    database.insert('item', itemModel.toMap());
+    database.insert('item', itemModel.toMapRequest());
   }
 
   // ----------------- a partir de aca no se hace una wea -----------------------------
   static Future<void> insert(ItemModel itemModel) async {
     Database database = await _opendDB();
-
+    
     database.insert('item', itemModel.toMap());
   }
 
@@ -72,7 +73,9 @@ class DB {
         (i) => ItemModel(
             id: itemMap[i]['id'],
             name: itemMap[i]['name'],
-            amount: itemMap[i]['amount']));
+            amount: itemMap[i]['amount'],
+            id_lista: itemMap[i]['id_lista'],
+            price: itemMap[i]['price']));
   }
 
   static Future<void> deleteAll() async {

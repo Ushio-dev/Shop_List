@@ -11,7 +11,7 @@ class ItemProvider with ChangeNotifier {
   get loading => _loading;
   get error => _error;
 
-  
+
   Future<void> fetchItems(int id) async {
     _loading = true;
     _error = '';
@@ -24,4 +24,8 @@ class ItemProvider with ChangeNotifier {
     }
   }
 
+  void nuevoItem(ItemModel item) async {
+    await DB.insertItem(item);
+    await fetchItems(item.id_lista as int);
+  }
 }
