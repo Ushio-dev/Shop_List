@@ -29,4 +29,9 @@ class ListasProvider with ChangeNotifier {
     await DB.insertLista(nameLista);
     await fetchData();
   }
+
+  void deleteAll() async {
+    await DB.deleteAll();
+    fetchData();
+  }
 }

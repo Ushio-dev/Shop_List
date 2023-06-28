@@ -54,15 +54,16 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
                 return ElevatedButton(
                     style: ButtonStyle(
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        )
-                      ),
+                          RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      )),
                     ),
                     clipBehavior: Clip.hardEdge,
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).pushNamed("/items", arguments: context.read<ListasProvider>().listas[index].id);
+                    },
                     child: Text(
-                        context.watch<ListasProvider>().listas[index].name,
+                        context.read<ListasProvider>().listas[index].name,
                         textAlign: TextAlign.center));
               },
             )),
@@ -83,7 +84,7 @@ class MyFab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
-      child: Icon(Icons.add),
+      child: const Icon(Icons.add),
       onPressed: () {
         showDialog(
           context: context,
@@ -129,7 +130,7 @@ class MyFab extends StatelessWidget {
                                     nombreListaController.text = "";
                                     Navigator.pop(context);
                                   },
-                                  child: Text("Cancelar")),
+                                  child: const Text("Cancelar")),
                               ElevatedButton(
                                   onPressed: () {
                                     if (formKey.currentState!.validate()) {

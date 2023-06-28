@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop_list/src/screens/items_screen.dart';
 import 'package:shop_list/src/screens/principal.dart';
 
 class MyApp extends StatelessWidget {
@@ -9,7 +10,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: "/",
       routes: {
-        "/":(context) => PrincipalScreen()
+        "/":(context) => PrincipalScreen(),
+        "/items":(context) => ItemsScreen()
       }
     );
   }
