@@ -62,6 +62,54 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
                     onPressed: () {
                       Navigator.of(context).pushNamed("/items", arguments: context.read<ListasProvider>().listas[index]);
                     },
+                    onLongPress: () {
+                      showDialog(context: context, builder: (context) {
+                        return AlertDialog(
+                          shape: const RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(32.0)),
+                          ),
+                          title:
+                              const Text("¿Estas seguro que deseas eliminar?"),
+                          content: Container(
+                            height: 120.0,
+                            child: Column(
+                              children: [
+                                Form(
+                                    key: formKey,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                          "Esta seguro que desea eliminar ${context.read<ListasProvider>().listas[index].name}?"),
+                                    )),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text("Cancelar")),
+                                    ElevatedButton(
+                                        onPressed: () {
+                                          // eliominar
+                                          context
+                                              .read<ListasProvider>()
+                                              .deleteLista(index);
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text("Confirmar"))
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ));
+                      },);
+                    },
                     child: Text(
                         context.read<ListasProvider>().listas[index].name,
                         textAlign: TextAlign.center));

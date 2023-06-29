@@ -28,22 +28,23 @@ class DB {
 
     return List.generate(
         listas.length,
-        (index) =>
-            ListaModel(id: listas[index]['Lista_Id'], name: listas[index]['name']));
+        (index) => ListaModel(
+            id: listas[index]['Lista_Id'], name: listas[index]['name']));
   }
 
   static Future<List<ItemModel>> traerItems(int id) async {
     Database db = await _opendDB();
-    final List<Map<String, dynamic>> items = await db.query('item', where: "lista_id = ?", whereArgs: [id]);
-    
+    final List<Map<String, dynamic>> items =
+        await db.query('item', where: "lista_id = ?", whereArgs: [id]);
+    print(items);
     return List.generate(
         items.length,
         (index) => ItemModel(
-            id: items[index]['id'],
+            id: items[index]['Item_Id'],
             name: items[index]['name'],
             amount: items[index]['amount'],
             price: items[index]['price'],
-            id_lista: items[index]['lista_id']));
+            id_lista: items[index]['Lista_Id']));
   }
 
   static Future<void> insertLista(String nombreLista) async {
@@ -52,15 +53,26 @@ class DB {
     final id = await db.insert("listas", lista);
   }
 
+  static Future<void> deleteList(int id) async {
+    Database db = await _opendDB();
+    await db.delete('item', where: 'lista_id = ?', whereArgs: [id]);
+    await db.delete('listas', where: "lista_id = ?", whereArgs: [id]);
+  }
   static Future<void> insertItem(ItemModel itemModel) async {
     Database database = await _opendDB();
     database.insert('item', itemModel.toMapRequest());
   }
 
+  static Future<void> deleteItem(int id) async {
+    Database db = await _opendDB();
+
+    await db.delete('item', where: "item_id = ?", whereArgs: [id]);
+  }
+
   // ----------------- a partir de aca no se hace una wea -----------------------------
   static Future<void> insert(ItemModel itemModel) async {
     Database database = await _opendDB();
-    
+
     database.insert('item', itemModel.toMap());
   }
 

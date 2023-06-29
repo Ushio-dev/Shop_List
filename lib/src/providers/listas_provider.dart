@@ -30,8 +30,10 @@ class ListasProvider with ChangeNotifier {
     await fetchData();
   }
 
-  void deleteAll() async {
-    await DB.deleteAll();
-    fetchData();
+  void deleteLista(int index) async {
+    int id = _listas[index].id as int;
+    await DB.deleteList(id);
+    _listas.removeAt(index);
+    notifyListeners();
   }
 }

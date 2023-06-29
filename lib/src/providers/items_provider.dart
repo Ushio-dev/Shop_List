@@ -28,4 +28,11 @@ class ItemProvider with ChangeNotifier {
     await DB.insertItem(item);
     await fetchItems(item.id_lista as int);
   }
+
+  void deleteItem(int index) async {
+    int id = _items[index].id as int;
+    await DB.deleteItem(id);
+    _items.removeAt(index);
+    notifyListeners();
+  }
 }

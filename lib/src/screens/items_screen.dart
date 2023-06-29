@@ -20,10 +20,11 @@ class _ItemsScreenState extends State<ItemsScreen> {
     context.read<ItemProvider>().fetchItems(id);
 
     GlobalKey<FormState> formKey = GlobalKey<FormState>();
+    GlobalKey<FormState> formDeleteKey = GlobalKey<FormState>();
     TextEditingController nombreItemController = TextEditingController();
     TextEditingController cantidadController = TextEditingController();
     TextEditingController precioController = TextEditingController();
-    //print(context.watch<ItemProvider>().items);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(name),
@@ -42,38 +43,78 @@ class _ItemsScreenState extends State<ItemsScreen> {
           itemCount: context.watch<ItemProvider>().items.length,
           itemBuilder: (context, index) {
             return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Table(
-                  defaultVerticalAlignment: TableCellVerticalAlignment.bottom,
-                  children: [
-                    TableRow(children: [
-                      TableRowInkWell(
-                        onTap: () {},
-                        child: Text(
-                            context.watch<ItemProvider>().items[index].name),
-                      ),
-                      TableRowInkWell(
-                        onTap: () {},
-                        child: Text(context
-                            .watch<ItemProvider>()
-                            .items[index]
-                            .amount
-                            .toString()),
-                      ),
-                      TableRowInkWell(
-                        onTap: () {},
-                        child: Text(context
-                            .watch<ItemProvider>()
-                            .items[index]
-                            .price
-                            .toString()),
-                      ),
-                    ])
-                  ],
+                child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: InkWell(
+                onTap: () {},
+                onLongPress: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                          shape: const RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(32.0)),
+                          ),
+                          title:
+                              const Text("¿Estas seguro que deseas eliminar?"),
+                          content: Container(
+                            height: 120.0,
+                            child: Column(
+                              children: [
+                                Form(
+                                    key: formDeleteKey,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                          "Esta seguro que desea eliminar ${context.read<ItemProvider>().items[index].name}?"),
+                                    )),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text("Cancelar")),
+                                    ElevatedButton(
+                                        onPressed: () {
+                                          // eliominar
+                                          context
+                                              .read<ItemProvider>()
+                                              .deleteItem(index);
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text("Confirmar"))
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ));
+                    },
+                  );
+                },
+                child: Card(
+                  child: Column(
+                    children: [
+                      ListTile(
+                        title: Text(
+                            context.read<ItemProvider>().items[index].name),
+                        subtitle: Text(
+                            "Cantidad: ${context.read<ItemProvider>().items[index].amount.toString()}"),
+                        trailing: Text(
+                            // ignore: prefer_interpolation_to_compose_strings
+                            "\$" + context.read<ItemProvider>().items[index].price.toString()),
+                      )
+                    ],
+                  ),
                 ),
               ),
-            );
+            ));
           },
         )),
       ),
