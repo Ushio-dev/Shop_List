@@ -6,7 +6,7 @@ class ItemProvider with ChangeNotifier {
   List<ItemModel> _items = [];
   bool _loading = true;
   String _error = '';
-  int _total = 0;
+  double _total = 0;
 
   get items => _items;
   get loading => _loading;
@@ -16,31 +16,57 @@ class ItemProvider with ChangeNotifier {
   Future<void> fetchItems(int id) async {
     _loading = true;
     _error = '';
-
+    _total = 0;
     try {
       _items = await DB.traerItems(id);
+      calcularTotal();
       notifyListeners();
     } catch (error) {
       _error = 'No se pudo cargar los items';
     }
   }
 
-  void nuevoItem(ItemModel item) async {
-    await DB.insertItem(item);
-    await fetchItems(item.id_lista as int);
+  Future<void> calcularTotal() async {
+    _items.forEach((element) =>
+        _total += (element.price as double) * (element.amount as int));
+  }
 
-    if (item.price != 0) {
-      _total = _total +  ((item.price as int) * (item.amount as int));
-      notifyListeners();
-    }
+  Future<void> reiniciarTotal() async {
+    _total = 0;
+  }
+
+  void nuevoItem(ItemModel item) async {
+    item = await DB.insertItem(item);
+    await fetchItems(item.id_lista as int);
   }
 
   void deleteItem(int index) async {
     int id = _items[index].id as int;
     await DB.deleteItem(id);
 
-    _total -= (_items[index].price as int) * (_items[index].amount as int);
+    _total -= (_items[index].price as double) * (_items[index].amount as int);
     _items.removeAt(index);
+
+    if (_total <= 0) {
+      _total = 0;
+    }
     notifyListeners();
+  }
+
+  void updateItem(ItemModel item, int index) async {
+    _total -= (_items[index].price as double) * (_items[index].amount as int);
+    if (_total <= 0) {
+      _total = 0;
+    }
+    await DB.updateItem(item);
+    _total = _total + ((item.price as double) * (item.amount as int));
+
+    _items[index] = item;
+    notifyListeners();
+  }
+
+  void close() {
+    _items.clear();
+    _total = 0;
   }
 }

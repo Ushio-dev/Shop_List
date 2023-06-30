@@ -6,7 +6,7 @@ import 'package:path/path.dart';
 class DB {
   static Future<void> createTableItem(Database db) async {
     await db.execute(
-        "CREATE TABLE item(Item_Id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, amount INTEGER, price INTEGER, Lista_Id INTEGER NOT NULL, FOREIGN KEY(Lista_Id) REFERENCES listas(Lista_Id))");
+        "CREATE TABLE item(Item_Id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, amount INTEGER, price REAL, Lista_Id INTEGER NOT NULL, FOREIGN KEY(Lista_Id) REFERENCES listas(Lista_Id))");
   }
 
   static Future<void> createTableListas(Database db) async {
@@ -59,11 +59,18 @@ class DB {
     await db.delete('listas', where: "lista_id = ?", whereArgs: [id]);
   }
 
-  static Future<void> insertItem(ItemModel itemModel) async {
+  static Future<ItemModel> insertItem(ItemModel itemModel) async {
     Database database = await _opendDB();
-    database.insert('item', itemModel.toMapRequest());
+    int id = await database.insert('item', itemModel.toMapRequest());
+    itemModel.id = id;
+    return itemModel; 
   }
 
+  static Future<void> updateItem(ItemModel itemModel) async {
+    Database db = await _opendDB();
+    await db.rawUpdate("UPDATE item SET name = ?, amount = ?, price = ? WHERE item_id = ?", [itemModel.name, itemModel.amount, itemModel.price, itemModel.id]);
+
+  }
   static Future<void> deleteItem(int id) async {
     Database db = await _opendDB();
 

@@ -1,8 +1,10 @@
+
+
 class ItemModel {
   int? id;
   String? name;
   int? amount;
-  int? price;
+  double? price;
   int? id_lista;
 
   ItemModel({this.id, this.name, this.amount, this.price, this.id_lista});

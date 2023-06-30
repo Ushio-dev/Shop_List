@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shop_list/src/screens/items_screen.dart';
 import 'package:shop_list/src/screens/principal.dart';
 
 class MyApp extends StatelessWidget {
@@ -11,7 +10,7 @@ class MyApp extends StatelessWidget {
       initialRoute: "/",
       routes: {
         "/":(context) => PrincipalScreen(),
-        "/items":(context) => ItemsScreen()
+        //"/items":(context) => ItemsScreen(MyLista: null,)
       }
     );
   }

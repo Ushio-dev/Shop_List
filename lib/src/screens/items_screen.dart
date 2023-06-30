@@ -5,20 +5,40 @@ import 'package:shop_list/src/data/ListaModel.dart';
 import 'package:shop_list/src/providers/items_provider.dart';
 
 class ItemsScreen extends StatefulWidget {
-  const ItemsScreen({super.key});
+  final ListaModel MyLista;
+  ItemsScreen({super.key, required this.MyLista});
 
   @override
   State<ItemsScreen> createState() => _ItemsScreenState();
 }
 
 class _ItemsScreenState extends State<ItemsScreen> {
+  ItemProvider? data;
+  var lista;
+  var id;
+  var name;
+
   @override
-  Widget build(BuildContext context) {
-    final lista = ModalRoute.of(context)!.settings.arguments as ListaModel;
-    final id = lista.id as int;
-    final name = lista.name;
+  void initState() {
+    // TODO: implement initState
+    data = Provider.of<ItemProvider>(context, listen: false);
+    lista = widget.MyLista;
+    id = lista.id;
+    name = lista.name;
     context.read<ItemProvider>().fetchItems(id);
 
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    data!.close();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     GlobalKey<FormState> formKey = GlobalKey<FormState>();
     GlobalKey<FormState> formDeleteKey = GlobalKey<FormState>();
     TextEditingController nombreItemController = TextEditingController();
@@ -50,7 +70,151 @@ class _ItemsScreenState extends State<ItemsScreen> {
                         child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          nombreItemController.text =
+                              context.read<ItemProvider>().items[index].name;
+                          precioController.text = context
+                              .read<ItemProvider>()
+                              .items[index]
+                              .price
+                              .toString();
+                          cantidadController.text = context
+                              .read<ItemProvider>()
+                              .items[index]
+                              .amount
+                              .toString();
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(32.0))),
+                                title: const Text(
+                                  'Nueva Producto',
+                                  textAlign: TextAlign.center,
+                                ),
+                                content: Stack(
+                                  clipBehavior: Clip.none,
+                                  children: [
+                                    Form(
+                                        key: formKey,
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: TextFormField(
+                                                autofocus: true,
+                                                controller:
+                                                    nombreItemController,
+                                                decoration:
+                                                    const InputDecoration(
+                                                  labelText: "Nombre",
+                                                ),
+                                                validator: (value) {
+                                                  if (value == null ||
+                                                      value.isEmpty) {
+                                                    return "Campo requerido";
+                                                  }
+                                                },
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: TextFormField(
+                                                controller: cantidadController,
+                                                decoration:
+                                                    const InputDecoration(
+                                                        labelText: "Cantidad"),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: TextFormField(
+                                                controller: precioController,
+                                                decoration:
+                                                    const InputDecoration(
+                                                        labelText:
+                                                            "Precio Unidad"),
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 10.0,
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceAround,
+                                              children: [
+                                                ElevatedButton(
+                                                    onPressed: () {
+                                                      nombreItemController
+                                                          .text = "";
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child:
+                                                        const Text("Cancelar")),
+                                                ElevatedButton(
+                                                    onPressed: () {
+                                                      if (formKey.currentState!
+                                                          .validate()) {
+                                                        String name =
+                                                            nombreItemController
+                                                                .text;
+                                                        int cantidad =
+                                                            cantidadController
+                                                                    .text
+                                                                    .isNotEmpty
+                                                                ? int.parse(
+                                                                    cantidadController
+                                                                        .text)
+                                                                : 1;
+                                                        double precio =
+                                                            precioController
+                                                                    .text
+                                                                    .isNotEmpty
+                                                                ? double.parse(
+                                                                    precioController
+                                                                        .text)
+                                                                : 0;
+
+                                                        ItemModel nuevoItem =
+                                                            ItemModel(
+                                                                id: context
+                                                                    .read<
+                                                                        ItemProvider>()
+                                                                    .items[
+                                                                        index]
+                                                                    .id,
+                                                                name: name,
+                                                                amount:
+                                                                    cantidad,
+                                                                price: precio,
+                                                                id_lista: id);
+                                                        context
+                                                            .read<
+                                                                ItemProvider>()
+                                                            .updateItem(
+                                                                nuevoItem,
+                                                                index);
+                                                        Navigator.pop(context);
+                                                      }
+                                                    },
+                                                    child:
+                                                        const Text("Agregar")),
+                                              ],
+                                            )
+                                          ],
+                                        ))
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        },
                         onLongPress: () {
                           showDialog(
                             context: context,
@@ -61,9 +225,9 @@ class _ItemsScreenState extends State<ItemsScreen> {
                                         BorderRadius.all(Radius.circular(32.0)),
                                   ),
                                   title: const Text(
-                                      "¿Estas seguro que deseas eliminar?"),
+                                      "¿Eliminar?", textAlign: TextAlign.center,),
                                   content: Container(
-                                    height: 120.0,
+                                    height: 95.0,
                                     child: Column(
                                       children: [
                                         Form(
@@ -133,7 +297,10 @@ class _ItemsScreenState extends State<ItemsScreen> {
               Container(
                   padding: EdgeInsets.all(16.0),
                   alignment: Alignment.bottomLeft,
-                  child: Text("Total: ${context.read<ItemProvider>().total}", style: TextStyle(fontWeight: FontWeight.bold),))
+                  child: Text(
+                    "Total: ${context.read<ItemProvider>().total}",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ))
             ],
           ),
         )),
@@ -199,6 +366,7 @@ class MyFab extends StatelessWidget {
                             padding: const EdgeInsets.all(8.0),
                             child: TextFormField(
                               controller: cantidadController,
+                              keyboardType: TextInputType.number,
                               decoration:
                                   const InputDecoration(labelText: "Cantidad"),
                             ),
@@ -207,6 +375,7 @@ class MyFab extends StatelessWidget {
                             padding: const EdgeInsets.all(8.0),
                             child: TextFormField(
                               controller: precioController,
+                              keyboardType: TextInputType.number,
                               decoration: const InputDecoration(
                                   labelText: "Precio Unidad"),
                             ),
@@ -231,10 +400,10 @@ class MyFab extends StatelessWidget {
                                               .text.isNotEmpty
                                           ? int.parse(cantidadController.text)
                                           : 1;
-                                      int precio =
-                                          precioController.text.isNotEmpty
-                                              ? int.parse(precioController.text)
-                                              : 0;
+                                      double precio = precioController
+                                              .text.isNotEmpty
+                                          ? double.parse(precioController.text)
+                                          : 0;
 
                                       ItemModel nuevoItem = ItemModel(
                                           name: name,
