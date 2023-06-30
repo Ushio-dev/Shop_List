@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_list/src/providers/listas_provider.dart';
+import 'package:shop_list/src/screens/items_screen.dart';
 
 class PrincipalScreen extends StatefulWidget {
   const PrincipalScreen({super.key});
@@ -43,28 +44,91 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
           body: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Center(
-                child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 200,
-                  childAspectRatio: 3 / 2,
-                  crossAxisSpacing: 20,
-                  mainAxisSpacing: 20),
-              itemCount: context.read<ListasProvider>().listas.length,
-              itemBuilder: (context, index) {
-                return ElevatedButton(
-                    style: ButtonStyle(
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
+                child: SafeArea(
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 200,
+                    childAspectRatio: 3 / 2,
+                    crossAxisSpacing: 20,
+                    mainAxisSpacing: 20),
+                itemCount: context.read<ListasProvider>().listas.length,
+                itemBuilder: (context, index) {
+                  return ElevatedButton(
+                      style: ButtonStyle(
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
-                        )
+                        )),
                       ),
-                    ),
-                    clipBehavior: Clip.hardEdge,
-                    onPressed: () {},
-                    child: Text(
-                        context.watch<ListasProvider>().listas[index].name,
-                        textAlign: TextAlign.center));
-              },
+                      clipBehavior: Clip.hardEdge,
+                      onPressed: () {
+                        //Navigator.of(context).pushNamed("/items", arguments: context.read<ListasProvider>().listas[index]);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ItemsScreen(
+                                  MyLista: context
+                                      .read<ListasProvider>()
+                                      .listas[index]),
+                            ));
+                      },
+                      onLongPress: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(32.0)),
+                                ),
+                                title: const Text(
+                                    "¿Estas seguro que deseas eliminar?"),
+                                content: Container(
+                                  height: 95.0,
+                                  child: Column(
+                                    children: [
+                                      Form(
+                                          key: formKey,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                                "Esta seguro que desea eliminar ${context.read<ListasProvider>().listas[index].name}?"),
+                                          )),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: [
+                                          ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              child: const Text("Cancelar")),
+                                          ElevatedButton(
+                                              onPressed: () {
+                                                // eliominar
+                                                context
+                                                    .read<ListasProvider>()
+                                                    .deleteLista(index);
+                                                Navigator.pop(context);
+                                              },
+                                              child: const Text("Confirmar"))
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ));
+                          },
+                        );
+                      },
+                      child: Text(
+                          context.read<ListasProvider>().listas[index].name,
+                          textAlign: TextAlign.center));
+                },
+              ),
             )),
           ));
     }
@@ -83,7 +147,7 @@ class MyFab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
-      child: Icon(Icons.add),
+      child: const Icon(Icons.add),
       onPressed: () {
         showDialog(
           context: context,
@@ -129,7 +193,7 @@ class MyFab extends StatelessWidget {
                                     nombreListaController.text = "";
                                     Navigator.pop(context);
                                   },
-                                  child: Text("Cancelar")),
+                                  child: const Text("Cancelar")),
                               ElevatedButton(
                                   onPressed: () {
                                     if (formKey.currentState!.validate()) {

@@ -29,4 +29,11 @@ class ListasProvider with ChangeNotifier {
     await DB.insertLista(nameLista);
     await fetchData();
   }
+
+  void deleteLista(int index) async {
+    int id = _listas[index].id as int;
+    await DB.deleteList(id);
+    _listas.removeAt(index);
+    notifyListeners();
+  }
 }

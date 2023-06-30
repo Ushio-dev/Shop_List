@@ -9,7 +9,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: "/",
       routes: {
-        "/":(context) => PrincipalScreen()
+        "/":(context) => PrincipalScreen(),
+        //"/items":(context) => ItemsScreen(MyLista: null,)
       }
     );
   }
