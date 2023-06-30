@@ -36,7 +36,7 @@ class DB {
     Database db = await _opendDB();
     final List<Map<String, dynamic>> items =
         await db.query('item', where: "lista_id = ?", whereArgs: [id]);
-    print(items);
+
     return List.generate(
         items.length,
         (index) => ItemModel(
@@ -58,6 +58,7 @@ class DB {
     await db.delete('item', where: 'lista_id = ?', whereArgs: [id]);
     await db.delete('listas', where: "lista_id = ?", whereArgs: [id]);
   }
+
   static Future<void> insertItem(ItemModel itemModel) async {
     Database database = await _opendDB();
     database.insert('item', itemModel.toMapRequest());

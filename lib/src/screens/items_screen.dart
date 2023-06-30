@@ -39,83 +39,103 @@ class _ItemsScreenState extends State<ItemsScreen> {
       body: Padding(
         padding: const EdgeInsets.all(3.0),
         child: Center(
-            child: ListView.builder(
-          itemCount: context.watch<ItemProvider>().items.length,
-          itemBuilder: (context, index) {
-            return Center(
-                child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: InkWell(
-                onTap: () {},
-                onLongPress: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                          shape: const RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(32.0)),
+            child: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  itemCount: context.watch<ItemProvider>().items.length,
+                  itemBuilder: (context, index) {
+                    return Center(
+                        child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: InkWell(
+                        onTap: () {},
+                        onLongPress: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(32.0)),
+                                  ),
+                                  title: const Text(
+                                      "¿Estas seguro que deseas eliminar?"),
+                                  content: Container(
+                                    height: 120.0,
+                                    child: Column(
+                                      children: [
+                                        Form(
+                                            key: formDeleteKey,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                  "Esta seguro que desea eliminar ${context.read<ItemProvider>().items[index].name}?"),
+                                            )),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          children: [
+                                            ElevatedButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: const Text("Cancelar")),
+                                            ElevatedButton(
+                                                onPressed: () {
+                                                  // eliominar
+                                                  context
+                                                      .read<ItemProvider>()
+                                                      .deleteItem(index);
+                                                  Navigator.pop(context);
+                                                },
+                                                child: const Text("Confirmar"))
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ));
+                            },
+                          );
+                        },
+                        child: Card(
+                          child: Column(
+                            children: [
+                              ListTile(
+                                title: Text(context
+                                    .read<ItemProvider>()
+                                    .items[index]
+                                    .name),
+                                subtitle: Text(
+                                    "Cantidad: ${context.read<ItemProvider>().items[index].amount.toString()}"),
+                                trailing: Text(
+                                    // ignore: prefer_interpolation_to_compose_strings
+                                    "\$" +
+                                        context
+                                            .read<ItemProvider>()
+                                            .items[index]
+                                            .price
+                                            .toString()),
+                              )
+                            ],
                           ),
-                          title:
-                              const Text("¿Estas seguro que deseas eliminar?"),
-                          content: Container(
-                            height: 120.0,
-                            child: Column(
-                              children: [
-                                Form(
-                                    key: formDeleteKey,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                          "Esta seguro que desea eliminar ${context.read<ItemProvider>().items[index].name}?"),
-                                    )),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: const Text("Cancelar")),
-                                    ElevatedButton(
-                                        onPressed: () {
-                                          // eliominar
-                                          context
-                                              .read<ItemProvider>()
-                                              .deleteItem(index);
-                                          Navigator.pop(context);
-                                        },
-                                        child: const Text("Confirmar"))
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ));
-                    },
-                  );
-                },
-                child: Card(
-                  child: Column(
-                    children: [
-                      ListTile(
-                        title: Text(
-                            context.read<ItemProvider>().items[index].name),
-                        subtitle: Text(
-                            "Cantidad: ${context.read<ItemProvider>().items[index].amount.toString()}"),
-                        trailing: Text(
-                            // ignore: prefer_interpolation_to_compose_strings
-                            "\$" + context.read<ItemProvider>().items[index].price.toString()),
-                      )
-                    ],
-                  ),
+                        ),
+                      ),
+                    ));
+                  },
                 ),
               ),
-            ));
-          },
+              Container(
+                  padding: EdgeInsets.all(16.0),
+                  alignment: Alignment.bottomLeft,
+                  child: Text("Total: ${context.read<ItemProvider>().total}", style: TextStyle(fontWeight: FontWeight.bold),))
+            ],
+          ),
         )),
       ),
     );
@@ -210,7 +230,7 @@ class MyFab extends StatelessWidget {
                                       int cantidad = cantidadController
                                               .text.isNotEmpty
                                           ? int.parse(cantidadController.text)
-                                          : 0;
+                                          : 1;
                                       int precio =
                                           precioController.text.isNotEmpty
                                               ? int.parse(precioController.text)
